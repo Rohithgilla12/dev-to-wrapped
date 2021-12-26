@@ -3,4 +3,5 @@ export interface ArticleStats {
   totalReactions: number;
   totalComments: number;
   totalReadingTime: number;
+  totalArticles: number;
 }

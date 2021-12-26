@@ -27,7 +27,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-slate-900 p-8 m-4 text-slate-200">
+      <body className="bg-lime-50 p-8 m-4 text-black">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
