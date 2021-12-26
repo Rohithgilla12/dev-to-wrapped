@@ -1,5 +1,5 @@
 import { LoaderFunction, useLoaderData } from "remix";
-import { ChartProvider, LineSeries, Tooltip, XAxis, YAxis } from "rough-charts";
+import { BarSeries, ChartProvider, Tooltip, XAxis, YAxis } from "rough-charts";
 import { ArticleProcessedData } from "~/types/articleProcessedData";
 import { mockResponse } from "../../mocks/mock-response";
 import { Article } from "../../types/articleData";
@@ -35,43 +35,36 @@ export default function JokeRoute() {
 
   return (
     <div>
-      <h1 className="text-center py-4 text-2xl mb-4 font-semibold">
+      <h1 className="text-center py-4  underline decoration-cyan-300 text-2xl mb-4 font-semibold">
         Dev.to Wrapped 2021
       </h1>
-      <div className="text-xl">
-        {`You have written a total of ${stats.totalArticles} articles in 2021`}
+      <div className="border-solid rounded-lg my-8 p-8 shadow-lg shadow-lime-100/50 bg-lime-100 flex flex-row justify-between">
+        <div className="text-xl underline decoration-sky-500 decoration-2">
+          {`You have written a total of ${stats.totalArticles} articles in 2021`}
+        </div>
+        <div className="text-xl underline decoration-pink-500 decoration-2">
+          {`You have written more articles in the month of ${articleProcessedData.monthHighArticles}`}
+        </div>
       </div>
-      <div className="text-xl ">
-        {`You have written more articles in the month of ${articleProcessedData.monthHighArticles}`}
-      </div>
+
       <div className="flex flex-row justify-between">
-        <p>Total Views: {stats.totalViews}</p>
-        <p>Total Reactions: {stats.totalReactions}</p>
-        <p>Total Comments: {stats.totalComments}</p>
-        <p>Total Reading Time: {stats.totalReadingTime}</p>
+        <StatsContainer title={`Total Views: ${stats.totalViews}`} />
+        <StatsContainer title={`Total Comments: ${stats.totalComments}`} />
+        <StatsContainer title={`Total Reactions: ${stats.totalReactions}`} />
+        <StatsContainer title={`Total Articles: ${stats.totalArticles}`} />
+        <StatsContainer
+          title={`Total Reading time: ${stats.totalReadingTime} min`}
+        />
       </div>
 
       <div className="my-2 flex flex-col">
         <div className="my-4">
           <ChartProvider
             data={articleProcessedData.monthWiseGraphData}
-            height={400}
+            height={300}
           >
             <XAxis dataKey="month" />
-            <LineSeries dataKey="articles" />
-            <YAxis dataKey="articles" format={(count) => `${count}`} />
-            <Tooltip>
-              {({ month, articles }) => `Articles in ${month}: ${articles}`}
-            </Tooltip>
-          </ChartProvider>
-        </div>
-        <div className="my-4">
-          <ChartProvider
-            data={articleProcessedData.monthWiseGraphData}
-            height={400}
-          >
-            <XAxis dataKey="month" />
-            <LineSeries dataKey="articles" />
+            <BarSeries dataKey="articles" />
             <YAxis dataKey="articles" format={(count) => `${count}`} />
             <Tooltip>
               {({ month, articles }) => `Articles in ${month}: ${articles}`}
@@ -82,3 +75,13 @@ export default function JokeRoute() {
     </div>
   );
 }
+interface StatsContainerProps {
+  title: string;
+}
+const StatsContainer: React.FC<StatsContainerProps> = ({ title }) => {
+  return (
+    <div className="border-solid rounded-lg bg-lime-200 shadow-lime-200/50 p-8">
+      {title}
+    </div>
+  );
+};
