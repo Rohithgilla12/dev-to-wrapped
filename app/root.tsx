@@ -38,6 +38,12 @@ export default function App() {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
+        <script
+          async
+          defer
+          data-website-id="a43386a2-09aa-4a32-8b9a-d1ac2acf557f"
+          src="https://umami-vercel-gold.vercel.app/umami.js"
+        ></script>
       </head>
       <body className="bg-lime-50 px-16 py-4 mx-16 my-4 text-black ">
         <Outlet />
