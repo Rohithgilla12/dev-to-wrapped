@@ -1,4 +1,4 @@
-import { LoaderFunction, useLoaderData, useTransition } from "remix";
+import { LoaderFunction, redirect, useLoaderData, useTransition } from "remix";
 import { ChartProvider, XAxis, BarSeries, YAxis, Tooltip } from "rough-charts";
 import { mockResponse } from "~/mocks/mock-response";
 import { Article } from "~/types/articleData";
@@ -12,33 +12,42 @@ import {
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const value = request.headers.get("Cookie");
+
   const cookieHeader = await cookie.parse(value);
 
-  const { apiKey } = cookieHeader;
+  console.log(`Cookie ${cookieHeader}`);
 
-  const response = await fetch("https://dev.to/api/articles/me/published", {
-    headers: {
-      "api-key": apiKey,
-    },
-  });
+  if (cookieHeader === null) {
+    // todo: redirect and show error to user
 
-  const data = await response.json();
+    return redirect("/", {});
+  } else {
+    const { apiKey } = cookieHeader;
 
-  const articles: Article[] = data;
+    const response = await fetch("https://dev.to/api/articles/me/published", {
+      headers: {
+        "api-key": apiKey,
+      },
+    });
 
-  const filteredArticles = articles.filter((article) => {
-    const year = article.published_at.slice(0, 4);
-    return year === "2021";
-  });
+    const data = await response.json();
 
-  const articleProcessedData: ArticleProcessedData = {
-    stats: processArticlesStats(filteredArticles),
-    monthWiseGraphData: articlesMapByMonth(filteredArticles),
-    monthHighArticles: findMonthWithHeighestArticles(filteredArticles),
-    filteredArticles,
-  };
+    const articles: Article[] = data;
 
-  return articleProcessedData;
+    const filteredArticles = articles.filter((article) => {
+      const year = article.published_at.slice(0, 4);
+      return year === "2021";
+    });
+
+    const articleProcessedData: ArticleProcessedData = {
+      stats: processArticlesStats(filteredArticles),
+      monthWiseGraphData: articlesMapByMonth(filteredArticles),
+      monthHighArticles: findMonthWithHeighestArticles(filteredArticles),
+      filteredArticles,
+    };
+
+    return articleProcessedData;
+  }
 };
 
 export default function AppRoute() {

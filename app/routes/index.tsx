@@ -38,8 +38,8 @@ export default function Index() {
 
   return (
     <div className="center">
-      <h1 className="text-2xl text-sky-400">Welcome to Dev.to wrapped</h1>
-      <Form method="post">
+      {/* <h1 className="text-2xl text-sky-400">Welcome to Dev.to wrapped</h1> */}
+      <Form className="form flex flex-row justify-center my-8" method="post">
         <div>
           <label>
             API Key:{" "}
@@ -52,11 +52,18 @@ export default function Index() {
         </div>
         <button
           type="submit"
-          className="button shadow-lg w-32 p-2 mt-4 text-white shadow-black/50 bg-black rounded-lg"
+          className="button shadow-lg w-32 px-8 mx-8 text-white shadow-black/50 bg-black rounded-lg"
         >
           Add
         </button>
       </Form>
+      <div className="rounded-2xl p-2 bg-sky-300">
+        <img
+          className="h-1/4 rounded-xl border-solid mx-auto"
+          src="https://res.cloudinary.com/rohith-gilla/image/upload/v1640586061/Blog/Screenshot_2021-12-27_at_11.50.54_AM_ngybxi.png"
+        ></img>
+      </div>
+
       <Outlet />
     </div>
   );
