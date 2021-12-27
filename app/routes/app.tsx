@@ -1,18 +1,30 @@
-import { LoaderFunction, useLoaderData } from "remix";
-import { BarSeries, ChartProvider, Tooltip, XAxis, YAxis } from "rough-charts";
+import { LoaderFunction, useLoaderData, useTransition } from "remix";
+import { ChartProvider, XAxis, BarSeries, YAxis, Tooltip } from "rough-charts";
+import { mockResponse } from "~/mocks/mock-response";
+import { Article } from "~/types/articleData";
 import { ArticleProcessedData } from "~/types/articleProcessedData";
-import { mockResponse } from "../../mocks/mock-response";
-import { Article } from "../../types/articleData";
+import { cookie } from "~/utils/cookie.server";
 import {
+  processArticlesStats,
   articlesMapByMonth,
   findMonthWithHeighestArticles,
-  processArticlesStats,
-} from "../../utils/processArticles";
+} from "~/utils/processArticles";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  const userId = params.userId;
-  console.log(userId);
-  const articles: Article[] = mockResponse;
+  const value = request.headers.get("Cookie");
+  const cookieHeader = await cookie.parse(value);
+
+  const { apiKey } = cookieHeader;
+
+  const response = await fetch("https://dev.to/api/articles/me/published", {
+    headers: {
+      "api-key": apiKey,
+    },
+  });
+
+  const data = await response.json();
+
+  const articles: Article[] = data;
 
   const filteredArticles = articles.filter((article) => {
     const year = article.published_at.slice(0, 4);
@@ -31,6 +43,17 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export default function AppRoute() {
   const articleProcessedData = useLoaderData<ArticleProcessedData>();
+  const transition = useTransition();
+
+  if (transition.state === "loading") {
+    return (
+      <div className="text-center py-4 underline decoration-cyan-300 text-2xl mb-4 font-semibold">
+        Dev.to Wrapped 2021
+        <div>Loading!</div>
+      </div>
+    );
+  }
+
   const stats = articleProcessedData.stats;
 
   return (
@@ -42,18 +65,23 @@ export default function AppRoute() {
         <div className="text-xl underline decoration-sky-500 decoration-2">
           {`You have written a total of ${stats.totalArticles} articles in 2021`}
         </div>
-        <div className="text-xl underline decoration-pink-500 decoration-2">
+        <div className="text-xl underline decoration-sky-500 decoration-2">
           {`You have written more articles in the month of ${articleProcessedData.monthHighArticles}`}
         </div>
       </div>
 
+      <h4 className="text-center py-4 underline decoration-cyan-300 text-xl mb-4">
+        These are a few stats of your articles which you have written in 2021
+      </h4>
+
       <div className="flex flex-row justify-between">
-        <StatsContainer title={`Total Views: ${stats.totalViews}`} />
-        <StatsContainer title={`Total Comments: ${stats.totalComments}`} />
-        <StatsContainer title={`Total Reactions: ${stats.totalReactions}`} />
-        <StatsContainer title={`Total Articles: ${stats.totalArticles}`} />
+        <StatsContainer title={`Views`} value={`${stats.totalViews}`} />
+        <StatsContainer title={`Comments`} value={`${stats.totalComments}`} />
+        <StatsContainer title={`Reactions`} value={`${stats.totalReactions}`} />
+        <StatsContainer title={`Articles`} value={`${stats.totalArticles}`} />
         <StatsContainer
-          title={`Total Reading time: ${stats.totalReadingTime} min`}
+          title={`Reading minutes`}
+          value={`${stats.totalReadingTime} min`}
         />
       </div>
 
@@ -77,11 +105,15 @@ export default function AppRoute() {
 }
 interface StatsContainerProps {
   title: string;
+  value: string;
 }
-const StatsContainer: React.FC<StatsContainerProps> = ({ title }) => {
+const StatsContainer: React.FC<StatsContainerProps> = ({ title, value }) => {
   return (
-    <div className="border-solid rounded-lg bg-lime-200 shadow-lime-200/50 p-8">
-      {title}
+    <div className="border-solid rounded-lg bg-lime-200 shadow-lime-200/50 p-4 w-1/6 flex flex-col text-center">
+      <div className="my-2">{title}</div>
+      <div className="font-bold underline decoration-pink-500 decoration-2">
+        {value}
+      </div>
     </div>
   );
 };
