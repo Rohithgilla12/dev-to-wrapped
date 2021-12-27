@@ -1,13 +1,13 @@
+import { TwitterIcon, TwitterShareButton } from "next-share";
 import { LoaderFunction, redirect, useLoaderData, useTransition } from "remix";
-import { ChartProvider, XAxis, BarSeries, YAxis, Tooltip } from "rough-charts";
-import { mockResponse } from "~/mocks/mock-response";
+import { BarSeries, ChartProvider, Tooltip, XAxis, YAxis } from "rough-charts";
 import { Article } from "~/types/articleData";
 import { ArticleProcessedData } from "~/types/articleProcessedData";
 import { cookie } from "~/utils/cookie.server";
 import {
-  processArticlesStats,
   articlesMapByMonth,
   findMonthWithHeighestArticles,
+  processArticlesStats,
 } from "~/utils/processArticles";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -108,6 +108,18 @@ export default function AppRoute() {
             </Tooltip>
           </ChartProvider>
         </div>
+      </div>
+
+      <div className="my-2 flex flex-row-reverse">
+        <div className="prose ml-4">Share it if you like it :D </div>
+        <TwitterShareButton
+          url={"https://devto-wrapped.netlify.app/"}
+          title={
+            "Generate a report of your articles in 2021 and share it with your friends"
+          }
+        >
+          <TwitterIcon size={32} round />
+        </TwitterShareButton>
       </div>
     </div>
   );
