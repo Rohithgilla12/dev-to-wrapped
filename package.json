@@ -5,9 +5,9 @@
   "license": "",
   "scripts": {
     "postinstall": "remix setup node",
-    "build": "npm run build:css && remix build",
+    "build": "yarn run build:css && remix build",
     "build:css": "tailwindcss -o ./app/tailwind.css",
-    "dev": "concurrently \"pnpm run dev:css\" \"NODE_ENV=development netlify dev\"",
+    "dev": "concurrently \"yarn run dev:css\" \"NODE_ENV=development netlify dev\"",
     "dev:css": "tailwindcss -o ./app/tailwind.css --watch"
   },
   "dependencies": {
@@ -17,7 +17,8 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "remix": "^1.1.1",
-    "rough-charts": "^0.5.0"
+    "rough-charts": "^0.5.0",
+    "webpack": "^5.65.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.1.1",
