@@ -24,11 +24,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   } else {
     const { apiKey } = cookieHeader;
 
-    const response = await fetch("https://dev.to/api/articles/me/published", {
-      headers: {
-        "api-key": apiKey,
-      },
-    });
+    const response = await fetch(
+      "https://dev.to/api/articles/me/published?per_page=1000",
+      {
+        headers: {
+          "api-key": apiKey,
+        },
+      }
+    );
 
     const data = await response.json();
 
